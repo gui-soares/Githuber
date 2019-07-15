@@ -3,7 +3,12 @@ import React, { Component } from 'react';
 import AsyncStorage from '@react-native-community/async-storage';
 
 import {
-  View, Text, TextInput, TouchableOpacity, StatusBar,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StatusBar,
+  ActivityIndicator,
 } from 'react-native';
 
 import api from '~/services/api';
@@ -13,35 +18,38 @@ import styles from './styles';
 class Welcome extends Component {
   state = {
     username: '',
+    loading: false,
+    error: false,
   };
 
   checkUserExists = async (username) => {
     const user = await api.get(`/users/${username}`);
 
     return user;
-  }
+  };
 
   saveUser = async (username) => {
     await AsyncStorage.setItem('@Githuber:userName', username);
-  }
+  };
 
   signIn = async () => {
     const { username } = this.state;
     const { navigation } = this.props;
 
+    this.setState({ loading: true });
+
     try {
       await this.checkUserExists(username);
       await this.saveUser(username);
 
-
       navigation.navigate('Repositories');
     } catch (err) {
-      console.tron.log('Usuário Inexistente.');
+      this.setState({ loading: false, error: true });
     }
   };
 
   render() {
-    const { username } = this.state;
+    const { username, loading, error } = this.state;
     return (
       <View style={styles.container}>
         <StatusBar backgroundColor="#000" />
@@ -49,6 +57,8 @@ class Welcome extends Component {
         <Text style={styles.text}>
           Para continuar precisamos que você informe seu usúario no github.
         </Text>
+
+        {error && <Text style={styles.error}>Usuário Inexistente</Text>}
 
         <View style={styles.form}>
           <TextInput
@@ -62,7 +72,11 @@ class Welcome extends Component {
           />
 
           <TouchableOpacity style={styles.button} onPress={this.signIn}>
-            <Text style={styles.buttonText}>Prosseguir</Text>
+            {loading ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.buttonText}>Prosseguir</Text>
+            )}
           </TouchableOpacity>
         </View>
       </View>
