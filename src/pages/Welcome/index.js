@@ -28,10 +28,6 @@ class Welcome extends Component {
     return user;
   };
 
-  saveUser = async (username) => {
-    await AsyncStorage.setItem('@Githuber:userName', username);
-  };
-
   signIn = async () => {
     const { username } = this.state;
     const { navigation } = this.props;
@@ -40,7 +36,7 @@ class Welcome extends Component {
 
     try {
       await this.checkUserExists(username);
-      await this.saveUser(username);
+      await AsyncStorage.setItem('@Githuber:username', username);
 
       navigation.navigate('Repositories');
     } catch (err) {
