@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-
 import AsyncStorage from '@react-native-community/async-storage';
+import PropTypes from 'prop-types';
 
 import {
   View,
@@ -16,6 +16,12 @@ import api from '~/services/api';
 import styles from './styles';
 
 class Welcome extends Component {
+  static propTypes = {
+    navigation: PropTypes.shape({
+      navigate: PropTypes.func,
+    }).isRequired,
+  };
+
   state = {
     username: '',
     loading: false,
@@ -48,7 +54,7 @@ class Welcome extends Component {
     const { username, loading, error } = this.state;
     return (
       <View style={styles.container}>
-        <StatusBar backgroundColor="#000" />
+        <StatusBar backgroundColor="#444a5a" />
         <Text style={styles.title}>Bem-Vindo</Text>
         <Text style={styles.text}>
           Para continuar precisamos que você informe seu usúario no github.
